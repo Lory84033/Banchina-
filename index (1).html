@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Banca 1°H — Banca FINTA (simulazione)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏦</text></svg>">
+<style>
+:root{
+  --navy:#0b2545; --navy2:#13315c; --gold:#c9a227; --gold2:#e0b93a;
+  --bg:#f3f5f9; --card:#ffffff; --ink:#1b2430; --muted:#6a7686; --line:#e3e8ef;
+  --ok:#1f8a4c; --bad:#c0392b; --warn:#fff4d6; --r:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+.wrap{width:100%;max-width:960px;margin:0 auto;padding:0 16px}
+.fake-banner{background:#8a1c14;color:#fff;text-align:center;padding:8px 12px;font-size:.82rem;font-weight:600;letter-spacing:.02em}
+header.top{background:var(--navy);color:#fff}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--gold);color:var(--navy);font-weight:800;font-size:.95rem}
+.brand b{display:block;font-size:1.1rem;letter-spacing:.01em;font-family:Georgia,"Times New Roman",serif}
+.brand small{opacity:.75;font-size:.75rem}
+#who{display:flex;align-items:center;gap:10px;font-size:.9rem}
+.pill{display:inline-block;background:var(--gold);color:var(--navy);border-radius:999px;padding:1px 9px;font-size:.72rem;font-weight:700}
+main{flex:1;width:100%;max-width:960px;margin:0 auto;padding:20px 16px 40px}
+footer{background:var(--navy);color:#cdd6e4;text-align:center;font-size:.78rem;padding:14px 16px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--navy);margin:0 0 .6rem}
+h2{font-size:1.2rem} h3{font-size:1.05rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 1px 2px rgba(11,37,69,.04);margin-bottom:16px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cols .card{margin-bottom:0}
+@media(max-width:720px){.cols{grid-template-columns:1fr}}
+.cols+.card{margin-top:16px}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:0}
+.hero .muted{color:#b9c5da}
+.balance{font-family:Georgia,"Times New Roman",serif;font-size:2.4rem;font-weight:700;letter-spacing:.01em;margin:2px 0}
+label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cfd6e1;border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+textarea{min-height:90px;resize:vertical}
+.btn{appearance:none;border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer;transition:.15s}
+.btn.primary{background:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--navy2)}
+.btn.gold{background:var(--gold);color:var(--navy)}
+.btn.gold:hover{background:var(--gold2)}
+.btn.ghost{background:transparent;border:1px solid #cfd6e1;color:var(--ink)}
+.top .btn.ghost{border-color:rgba(255,255,255,.35);color:#fff}
+.btn.danger{background:var(--bad);color:#fff}
+.btn.sm{padding:6px 12px;font-size:.82rem;border-radius:8px}
+.btn.block{width:100%;margin-top:16px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end;margin-top:16px}
+.auth{max-width:460px;margin:0 auto}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:#eef1f6;border-radius:10px;padding:4px;margin-bottom:8px}
+.seg button{border:0;background:transparent;padding:9px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.note-box{background:var(--warn);border:1px solid #ecd78f;border-radius:var(--r);padding:12px 14px;font-size:.85rem;margin-top:14px}
+.checks{list-style:none;padding:0;margin:8px 0 0;font-size:.8rem}
+.checks li{color:var(--muted);padding:1px 0}
+.checks li.ok{color:var(--ok)}
+.checks li::before{content:"○ "} .checks li.ok::before{content:"✓ "}
+.err{color:var(--bad);font-size:.85rem;margin-top:10px;min-height:1.2em}
+.inline-check{display:flex;gap:8px;align-items:flex-start;font-weight:500;font-size:.85rem;margin:12px 0 0}
+.inline-check input{width:auto;margin-top:4px}
+.tx{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.tx:last-child{border:0}
+.tx .t{font-weight:600}
+.tx .s{color:var(--muted);font-size:.83rem;word-break:break-word}
+.amt{font-weight:700;white-space:nowrap;text-align:right}
+.amt.in{color:var(--ok)} .amt.out{color:var(--bad)}
+.empty{color:var(--muted);text-align:center;padding:18px 0;font-size:.9rem}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.75rem;font-weight:700}
+.badge.pending{background:#fff1c7;color:#7a5b00}
+.badge.accepted{background:#d9f2e3;color:#146a38}
+.badge.rejected{background:#f9dcd8;color:#922b20}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{border:1px solid var(--line);background:#fff;padding:9px 16px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tabs .count{background:var(--gold);color:var(--navy);border-radius:999px;padding:0 7px;font-size:.75rem;margin-left:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.stat b{display:block;font-family:Georgia,serif;font-size:1.5rem;color:var(--navy)}
+.stat span{font-size:.8rem;color:var(--muted)}
+.urow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}
+.urow:last-child{border:0}
+.rep{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff}
+.rep p{margin:.4rem 0;white-space:pre-wrap;word-break:break-word}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tools input,.tools select{flex:1;min-width:150px}
+.modal-back{position:fixed;inset:0;background:rgba(11,37,69,.55);display:grid;place-items:center;padding:16px;z-index:50;overflow:auto}
+.modal{background:#fff;border-radius:16px;padding:22px;width:100%;max-width:460px;box-shadow:0 20px 50px rgba(0,0,0,.3);max-height:92vh;overflow:auto}
+.modal ul{padding-left:18px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:calc(100% - 32px);max-width:420px}
+.toast{background:var(--navy);color:#fff;padding:11px 16px;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px rgba(0,0,0,.25);width:100%;text-align:center}
+.toast.err{background:var(--bad)} .toast.ok{background:var(--ok)}
+.radio{display:flex;gap:8px;align-items:center;font-weight:500;margin:8px 0}
+.radio input{width:auto}
+</style>
+</head>
+<body>
+
+<div class="fake-banner">⚠️ BANCA FINTA · SIMULAZIONE · Gli Alessandri (₳) non sono denaro vero e non hanno nessun valore</div>
+
+<header class="top">
+  <div class="wrap bar">
+    <div class="brand">
+      <div class="logo">1°H</div>
+      <div><b>Banca 1°H</b><small>Banca finta · solo per gioco</small></div>
+    </div>
+    <div id="who"></div>
+  </div>
+</header>
+
+<main id="app"><div class="empty">Caricamento…</div></main>
+
+<footer>
+  Banca 1°H è un progetto <b>di fantasia</b>. Nessun denaro reale, nessun conto reale, nessun pagamento reale.
+  Non inserire mai dati personali veri né password che usi altrove.
+</footer>
+
+<div id="toast"></div>
+<noscript><p style="padding:20px">Questo sito (finto) richiede JavaScript.</p></noscript>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, addDoc, collection, query, where, orderBy, limit, onSnapshot, writeBatch, increment, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ============ Configurazione Firebase (progetto "banchina") ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAdfRR1aKnIshGaH5zMGcQOhPQH5Vn7NZw",
+  authDomain: "banchina.firebaseapp.com",
+  projectId: "banchina",
+  storageBucket: "banchina.firebasestorage.app",
+  messagingSenderId: "119695888923",
+  appId: "1:119695888923:web:a28a5838d5e2e850899ebe",
+  measurementId: "G-MNMF4BB633"
+};
+const fbApp = initializeApp(firebaseConfig);
+(async () => { try { if (await isSupported()) getAnalytics(fbApp); } catch (e) {} })();
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
+/* ============ Costanti del gioco ============ */
+const START = 1000;                 // Alessandri alla registrazione
+const BONUS = 30;                   // Alessandri ogni periodo
+const PERIOD = 3 * 24 * 3600 * 1000;// 3 giorni
+const MAX_TX = 100000;              // limite per singolo bonifico
+const MAIL_DOMAIN = "banca1h.example"; // email finta usata solo come "nome utente" tecnico
+const BANK = "Banca 1°H";
+const NICK_RE = /^[a-z0-9_]{3,16}$/;
+
+/* ============ Utilità ============ */
+const app = document.getElementById("app");
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = n => "₳ " + Number(n || 0).toLocaleString("it-IT");
+const tsMs = t => (t && t.toMillis) ? t.toMillis() : Date.now();
+const fmtDate = t => new Date(tsMs(t)).toLocaleString("it-IT", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const toInt = v => { const n = Number(v); return (v !== "" && Number.isInteger(n)) ? n : NaN; };
+const byDateDesc = (a, b) => tsMs(b.createdAt) - tsMs(a.createdAt);
+class UserError extends Error {}
+
+function toast(msg, type = "") {
+  const t = document.createElement("div");
+  t.className = "toast " + type; t.textContent = msg;
+  $("#toast").appendChild(t);
+  setTimeout(() => t.remove(), 4200);
+}
+
+function friendly(e) {
+  if (e instanceof UserError) return e.message;
+  const c = (e && e.code) || "";
+  const map = {
+    "auth/invalid-credential": "Nickname o password errati.",
+    "auth/wrong-password": "Nickname o password errati.",
+    "auth/user-not-found": "Nickname o password errati.",
+    "auth/invalid-email": "Nickname non valido.",
+    "auth/too-many-requests": "Troppi tentativi. Riprova tra qualche minuto.",
+    "auth/email-already-in-use": "Questo nickname è già in uso.",
+    "auth/network-request-failed": "Connessione assente.",
+    "auth/operation-not-allowed": "L'accesso Email/Password non è attivo nel progetto Firebase (vedi README).",
+    "auth/weak-password": "Password troppo debole.",
+    "permission-denied": "Operazione non consentita dalle regole di sicurezza.",
+    "unavailable": "Server non raggiungibile. Riprova.",
+    "not-found": "Elemento non trovato (l'altro account esiste ancora?).",
+    "failed-precondition": "Operazione non riuscita (controlla le regole Firestore)."
+  };
+  return map[c] || ("Errore: " + ((e && e.message) || e));
+}
+
+async function run(btn, fn) {
+  if (btn.disabled) return;
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = "Attendi…";
+  try { await fn(); } catch (e) { console.warn(e); toast(friendly(e), "err"); }
+  finally { btn.disabled = false; btn.textContent = label; }
+}
+
+function modal(html, { locked = false } = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "modal-back";
+  wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.appendChild(wrap);
+  const onKey = e => { if (e.key === "Escape" && !locked) close(); };
+  const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); };
+  document.addEventListener("keydown", onKey);
+  if (!locked) wrap.addEventListener("mousedown", e => { if (e.target === wrap) close(); });
+  return { el: wrap, close };
+}
+
+function confirmBox(title, html, okLabel = "Conferma") {
+  return new Promise(res => {
+    const m = modal(`<h3>${esc(title)}</h3><div>${html}</div>
+      <div class="row end"><button class="btn ghost" id="cNo">Annulla</button><button class="btn primary" id="cYes">${esc(okLabel)}</button></div>`);
+    $("#cNo", m.el).onclick = () => { m.close(); res(false); };
+    $("#cYes", m.el).onclick = () => { m.close(); res(true); };
+  });
+}
+
+/* ============ Password rigida ============ */
+const COMMON = ["password", "passw0rd", "qwerty", "123456", "letmein", "admin", "banca", "alessandr", "iloveyou", "welcome", "abc123", "11111", "00000"];
+function hasSequence(s) {
+  const seqs = ["abcdefghijklmnopqrstuvwxyz", "0123456789", "qwertyuiop", "asdfghjkl", "zxcvbnm"];
+  for (const q of seqs) for (let i = 0; i + 4 <= q.length; i++) {
+    const p = q.slice(i, i + 4);
+    if (s.includes(p) || s.includes([...p].reverse().join(""))) return true;
+  }
+  return false;
+}
+function pwChecks(pw, nick) {
+  const low = pw.toLowerCase();
+  return [
+    { ok: pw.length >= 12 && pw.length <= 64, label: "Da 12 a 64 caratteri" },
+    { ok: /[a-z]/.test(pw), label: "Almeno una lettera minuscola" },
+    { ok: /[A-Z]/.test(pw), label: "Almeno una lettera maiuscola" },
+    { ok: /\d/.test(pw), label: "Almeno un numero" },
+    { ok: /[^A-Za-z0-9\s]/.test(pw), label: "Almeno un simbolo (es. ! ? # $ %)" },
+    { ok: pw.length > 0 && !/\s/.test(pw), label: "Nessuno spazio" },
+    { ok: pw.length > 0 && !/(.)\1\1/.test(pw), label: "Nessun carattere ripetuto 3 volte di fila" },
+    { ok: pw.length > 0 && !hasSequence(low), label: "Nessuna sequenza ovvia (abcd, 1234, qwerty…)" },
+    { ok: pw.length > 0 && !(nick && nick.length >= 3 && low.includes(nick)) && !COMMON.some(w => low.includes(w)), label: "Non contiene il nickname né parole comuni" }
+  ];
+}
+
+/* ============ Stato globale ============ */
+const state = { view: "auth", registering: false, user: null, role: null, unsubs: [], timers: [] };
+function cleanup() {
+  state.unsubs.forEach(u => { try { u(); } catch (e) {} });
+  state.timers.forEach(t => clearInterval(t));
+  state.unsubs = []; state.timers = [];
+}
+
+function renderHeader() {
+  const who = $("#who");
+  if (!state.user || state.view === "auth") { who.innerHTML = ""; return; }
+  const nick = state.nick || "";
+  who.innerHTML = `<span>${esc(nick)}</span>${state.role === "admin" ? '<span class="pill">Admin</span>' : ""}<button class="btn ghost sm" id="logout">Esci</button>`;
+  $("#logout").onclick = () => signOut(auth);
+}
+
+/* ============ Avviso iniziale ============ */
+function showGate() {
+  try { if (localStorage.getItem("b1h_gate") === "1") return; } catch (e) {}
+  const m = modal(`
+    <h2>⚠️ Questa è una banca FINTA</h2>
+    <ul>
+      <li>È solo un <b>gioco / simulazione</b>.</li>
+      <li>Gli <b>Alessandri (₳)</b> non sono soldi veri e non valgono nulla.</li>
+      <li>Non puoi depositare, prelevare o pagare nulla di reale.</li>
+      <li><b>Non inserire</b> dati personali veri e <b>non riusare</b> password che usi altrove.</li>
+    </ul>
+    <button class="btn gold block" id="gateOk">Ho capito: è tutto finto</button>`, { locked: true });
+  $("#gateOk", m.el).onclick = () => { try { localStorage.setItem("b1h_gate", "1"); } catch (e) {} m.close(); };
+}
+
+/* ============ Autenticazione ============ */
+const nickToEmail = n => `${n}@${MAIL_DOMAIN}`;
+
+function renderAuth(mode = "login") {
+  state.view = "auth"; state.user = null; state.role = null;
+  cleanup(); renderHeader();
+  const login = `
+    <form id="fLogin" autocomplete="on" novalidate>
+      <label for="lNick">Nickname</label>
+      <input id="lNick" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="16">
+      <label for="lPw">Password</label>
+      <input id="lPw" type="password" autocomplete="current-password">
+      <div class="err" id="lErr"></div>
+      <button class="btn primary block" id="lGo" type="submit">Accedi</button>
+    </form>`;
+  const register = `
+    <form id="fReg" autocomplete="off" novalidate>
+      <label for="rNick">Scegli un nickname</label>
+      <input id="rNick" autocapitalize="none" spellcheck="false" maxlength="16" placeholder="3–16 caratteri: a-z, 0-9, _">
+      <label for="rPw">Password rigida</label>
+      <input id="rPw" type="password" autocomplete="new-password">
+      <label for="rPw2">Ripeti la password</label>
+      <input id="rPw2" type="password" autocomplete="new-password">
+      <ul class="checks" id="rChecks"></ul>
+      <label class="inline-check"><input type="checkbox" id="rShow"> Mostra password</label>
+      <label class="inline-check"><input type="checkbox" id="rAdmin"> <span id="rAdminTxt">Voglio creare l'account <b>amministratore</b> (serve il codice segreto)</span></label>
+      <div id="rCodeWrap" hidden>
+        <label for="rCode">Codice amministratore</label>
+        <input id="rCode" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="B1H-XXXXX-XXXXX-XXXXX-XXXXX">
+      </div>
+      <div class="note-box">🔒 Usa una password <b>inventata solo per questo gioco</b>. Non usare mai password vere (email, scuola, social…). Il sito è finto.</div>
+      <div class="err" id="rErr"></div>
+      <button class="btn primary block" id="rGo" type="submit" disabled>Crea account</button>
+    </form>`;
+  app.innerHTML = `
+    <div class="auth">
+      <div class="card">
+        <div class="seg"><button data-m="login" class="${mode === "login" ? "on" : ""}">Accedi</button><button data-m="register" class="${mode === "register" ? "on" : ""}">Registrati</button></div>
+        ${mode === "login" ? login : register}
+      </div>
+      <div class="note-box">⚠️ <b>Banca finta.</b> Alla registrazione ricevi <b>${fmt(START)}</b> inventati, e ogni 3 giorni altri <b>${fmt(BONUS)}</b>. Nessun valore reale.</div>
+    </div>`;
+  app.querySelectorAll(".seg button").forEach(b => b.onclick = () => renderAuth(b.dataset.m));
+
+  if (mode === "login") {
+    $("#fLogin").onsubmit = ev => { ev.preventDefault(); run($("#lGo"), async () => {
+      $("#lErr").textContent = "";
+      const nick = $("#lNick").value.trim().toLowerCase();
+      const pw = $("#lPw").value;
+      if (!NICK_RE.test(nick) || !pw) throw new UserError("Inserisci nickname e password.");
+      try { await signInWithEmailAndPassword(auth, nickToEmail(nick), pw); }
+      catch (e) { $("#lErr").textContent = friendly(e); throw new UserError(friendly(e)); }
+    }); };
+    return;
+  }
+
+  // registrazione
+  let adminExists = false;
+  getDoc(doc(db, "meta", "status")).then(s => {
+    adminExists = s.exists();
+    if (adminExists) { $("#rAdminTxt").innerHTML = "Account amministratore: <b>già presente</b> (ne esiste uno solo)"; $("#rAdmin").disabled = true; }
+  }).catch(() => {});
+  const upd = () => {
+    const nick = $("#rNick").value.trim().toLowerCase();
+    const pw = $("#rPw").value, pw2 = $("#rPw2").value;
+    const checks = pwChecks(pw, nick);
+    $("#rChecks").innerHTML = checks.map(c => `<li class="${c.ok ? "ok" : ""}">${esc(c.label)}</li>`).join("");
+    const same = pw.length > 0 && pw === pw2;
+    const nickOk = NICK_RE.test(nick);
+    const adminOk = !$("#rAdmin").checked || $("#rCode").value.trim().length >= 10;
+    $("#rGo").disabled = !(nickOk && same && checks.every(c => c.ok) && adminOk);
+    $("#rErr").textContent = (pw2 && !same) ? "Le due password non coincidono." : (($("#rNick").value && !nickOk) ? "Nickname: 3–16 caratteri, solo a-z, 0-9 e _." : "");
+  };
+  ["rNick", "rPw", "rPw2", "rCode"].forEach(id => $("#" + id).addEventListener("input", upd));
+  $("#rAdmin").onchange = () => { $("#rCodeWrap").hidden = !$("#rAdmin").checked; upd(); };
+  $("#rShow").onchange = () => { const t = $("#rShow").checked ? "text" : "password"; $("#rPw").type = t; $("#rPw2").type = t; };
+  upd();
+
+  $("#fReg").onsubmit = ev => { ev.preventDefault(); run($("#rGo"), async () => {
+    const nick = $("#rNick").value.trim().toLowerCase();
+    const pw = $("#rPw").value;
+    const asAdmin = $("#rAdmin").checked;
+    const code = $("#rCode").value.trim().toUpperCase();
+    if (!NICK_RE.test(nick) || !pwChecks(pw, nick).every(c => c.ok)) throw new UserError("Controlla nickname e password.");
+    if (asAdmin) {
+      const st = await getDoc(doc(db, "meta", "status")).catch(() => null);
+      if (st && st.exists()) throw new UserError("Esiste già un account amministratore.");
+    }
+    state.registering = true;
+    let cred;
+    try { cred = await createUserWithEmailAndPassword(auth, nickToEmail(nick), pw); }
+    catch (e) { state.registering = false; throw e; }
+    try {
+      const b = writeBatch(db);
+      if (asAdmin) {
+        b.set(doc(db, "meta", "admin"), { uid: cred.user.uid, code, createdAt: serverTimestamp() });
+        b.set(doc(db, "meta", "status"), { adminExists: true });
+        b.set(doc(db, "nicknames", nick), { uid: cred.user.uid, role: "admin" });
+      } else {
+        const txRef = doc(collection(db, "transactions"));
+        b.set(doc(db, "nicknames", nick), { uid: cred.user.uid, role: "user" });
+        b.set(doc(db, "users", cred.user.uid), { nickname: nick, balance: START, bonusClaims: 0, createdAt: serverTimestamp(), lastBonusAt: serverTimestamp() });
+        b.set(txRef, { type: "welcome", from: null, fromNick: BANK, to: cred.user.uid, toNick: nick, amount: START, note: "Benvenuto! Bonus di apertura (finto)", participants: [cred.user.uid], createdAt: serverTimestamp() });
+      }
+      await b.commit();
+    } catch (e) {
+      try { await deleteUser(cred.user); } catch (e2) {}
+      state.registering = false;
+      if (asAdmin && e.code === "permission-denied") throw new UserError("Codice amministratore errato oppure amministratore già creato.");
+      throw e;
+    }
+    state.registering = false;
+    toast(asAdmin ? "Account amministratore creato!" : `Account creato! Hai ricevuto ${fmt(START)}`, "ok");
+    await boot(cred.user);
+  }); };
+}
+
+onAuthStateChanged(auth, async user => {
+  if (state.registering) return;
+  if (!user) { if (state.view !== "auth") renderAuth(); return; }
+  await boot(user);
+});
+
+async function boot(user) {
+  cleanup();
+  state.user = user;
+  try {
+    const u = await getDoc(doc(db, "users", user.uid));
+    if (u.exists()) { state.role = "user"; state.nick = u.data().nickname; startCustomer(user.uid); return; }
+    let a = null;
+    try { a = await getDoc(doc(db, "meta", "admin")); } catch (e) {}
+    if (a && a.exists()) {
+      state.role = "admin";
+      state.nick = (user.email || "").split("@")[0];
+      startAdmin(); return;
+    }
+    toast("Account incompleto. Registrati di nuovo con un altro nickname.", "err");
+    await signOut(auth);
+  } catch (e) {
+    console.warn(e); toast(friendly(e), "err");
+    await signOut(auth).catch(() => {});
+  }
+}
+
+/* ============ Rendering movimenti ============ */
+const TX_LABEL = {
+  transfer: "Bonifico", welcome: "Bonus di benvenuto", bonus: "Bonus periodico",
+  admin_add: "Accredito dell'amministratore", admin_remove: "Prelievo dell'amministratore",
+  fee: "Addebito", refund: "Rimborso segnalazione", compensation: "Risarcimento"
+};
+function txView(t, uid) {
+  const incoming = t.to === uid, outgoing = t.from === uid;
+  let title = TX_LABEL[t.type] || t.type, who = "";
+  if (t.type === "transfer") { who = incoming ? `Da ${t.fromNick}` : `A ${t.toNick}`; title = incoming ? "Bonifico ricevuto" : "Bonifico inviato"; }
+  else if (t.type === "refund") { who = incoming ? `Da ${t.fromNick}` : `A ${t.toNick}`; title = incoming ? "Rimborso ricevuto" : "Rimborso pagato (segnalazione)"; }
+  else who = incoming ? `Da ${t.fromNick || BANK}` : `A ${t.toNick || BANK}`;
+  return { title, who, sign: incoming && !outgoing ? "in" : "out" };
+}
+
+/* ============ AREA CLIENTE ============ */
+function startCustomer(uid) {
+  state.view = "customer"; renderHeader();
+  const me = { uid, nick: state.nick, balance: 0, lastTs: null, claiming: false };
+  let txs = [], reports = [];
+  app.innerHTML = `
+    <section class="card hero">
+      <div class="muted">Saldo disponibile</div>
+      <div class="balance" id="bal">…</div>
+      <div class="muted small" id="bonusInfo"></div>
+    </section>
+    <div class="cols">
+      <section class="card">
+        <h2>Fai un bonifico</h2>
+        <form id="fTx" novalidate>
+          <label for="tNick">Nickname del destinatario</label>
+          <input id="tNick" autocapitalize="none" spellcheck="false" maxlength="16">
+          <label for="tAmt">Importo (Alessandri, numero intero, max ${MAX_TX.toLocaleString("it-IT")})</label>
+          <input id="tAmt" type="number" min="1" max="${MAX_TX}" step="1" inputmode="numeric">
+          <label for="tNote">Causale (facoltativa)</label>
+          <input id="tNote" maxlength="100">
+          <button class="btn primary block" id="tGo" type="submit">Invia bonifico</button>
+        </form>
+      </section>
+      <section class="card" id="repCard">
+        <h2>Segnala una truffa</h2>
+        <p class="muted small">Qualcuno ti ha ingannato? Scrivi all'amministratore: se la segnalazione è giusta potrai riavere i soldi (finti).</p>
+        <form id="fRep" novalidate>
+          <label for="sNick">Nickname di chi ti ha truffato</label>
+          <input id="sNick" autocapitalize="none" spellcheck="false" maxlength="16">
+          <label for="sAmt">Quanto hai perso (₳)</label>
+          <input id="sAmt" type="number" min="1" step="1" inputmode="numeric">
+          <label for="sDesc">Cos'è successo? (10–500 caratteri)</label>
+          <textarea id="sDesc" maxlength="500"></textarea>
+          <button class="btn gold block" id="sGo" type="submit">Invia segnalazione</button>
+        </form>
+      </section>
+    </div>
+    <section class="card"><h2>Le mie segnalazioni</h2><div id="myReports"></div></section>
+    <section class="card"><h2>Movimenti</h2><div id="txList"></div></section>`;
+
+  const bonusText = () => {
+    if (!me.lastTs) return "";
+    const left = me.lastTs.toMillis() + PERIOD - Date.now();
+    if (left <= 0) return "Bonus in arrivo…";
+    const d = Math.floor(left / 86400000), h = Math.floor(left % 86400000 / 3600000), m = Math.floor(left % 3600000 / 60000);
+    return `Prossimo bonus di ${fmt(BONUS)} tra ${d > 0 ? d + " g " : ""}${h} h ${m} min`;
+  };
+  const paintBonus = () => { const el = $("#bonusInfo"); if (el) el.textContent = bonusText(); };
+
+  async function maybeClaim() {
+    if (me.claiming || !me.lastTs) return;
+    const n = Math.min(200, Math.floor((Date.now() - 120000 - me.lastTs.toMillis()) / PERIOD));
+    if (n < 1) return;
+    me.claiming = true;
+    try {
+      const txRef = doc(collection(db, "transactions"));
+      const b = writeBatch(db);
+      b.update(doc(db, "users", uid), {
+        balance: increment(BONUS * n), bonusClaims: increment(n),
+        lastBonusAt: new Timestamp(me.lastTs.seconds + n * 259200, me.lastTs.nanoseconds)
+      });
+      b.set(txRef, { type: "bonus", from: null, fromNick: BANK, to: uid, toNick: me.nick, amount: BONUS * n, note: `Bonus ogni 3 giorni (${n} ${n > 1 ? "periodi" : "periodo"})`, participants: [uid], createdAt: serverTimestamp() });
+      await b.commit();
+      toast(`Bonus ricevuto: ${fmt(BONUS * n)}`, "ok");
+    } catch (e) { console.warn("bonus", e); }
+    finally { me.claiming = false; }
+  }
+
+  state.unsubs.push(onSnapshot(doc(db, "users", uid), snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    me.balance = d.balance; me.lastTs = d.lastBonusAt;
+    const el = $("#bal"); if (el) el.textContent = fmt(d.balance);
+    paintBonus(); maybeClaim();
+  }, e => toast(friendly(e), "err")));
+
+  state.timers.push(setInterval(() => { paintBonus(); maybeClaim(); }, 60000));
+
+  const paintTx = () => {
+    const el = $("#txList"); if (!el) return;
+    const list = [...txs].sort(byDateDesc).slice(0, 60);
+    if (!list.length) { el.innerHTML = '<div class="empty">Nessun movimento.</div>'; return; }
+    el.innerHTML = list.map(t => {
+      const v = txView(t, uid);
+      const canReport = t.type === "transfer" && t.from === uid;
+      return `<div class="tx">
+        <div><div class="t">${esc(v.title)}</div>
+          <div class="s">${esc(v.who)} · ${esc(fmtDate(t.createdAt))}${t.note ? " · " + esc(t.note) : ""}</div>
+          ${canReport ? `<button class="btn ghost sm" style="margin-top:6px" data-rep="${esc(t.id)}">Segnala truffa</button>` : ""}
+        </div>
+        <div class="amt ${v.sign}">${v.sign === "in" ? "+" : "−"} ${fmt(t.amount)}</div></div>`;
+    }).join("");
+  };
+  $("#txList").addEventListener("click", ev => {
+    const b = ev.target.closest("[data-rep]"); if (!b) return;
+    const t = txs.find(x => x.id === b.dataset.rep); if (!t) return;
+    $("#sNick").value = t.toNick; $("#sAmt").value = t.amount;
+    $("#repCard").scrollIntoView({ behavior: "smooth", block: "center" });
+    $("#sDesc").focus();
+  });
+  state.unsubs.push(onSnapshot(query(collection(db, "transactions"), where("participants", "array-contains", uid)), snap => {
+    txs = snap.docs.map(d => ({ id: d.id, ...d.data() })); paintTx();
+  }, e => toast(friendly(e), "err")));
+
+  const paintReports = () => {
+    const el = $("#myReports"); if (!el) return;
+    const list = [...reports].sort(byDateDesc);
+    if (!list.length) { el.innerHTML = '<div class="empty">Nessuna segnalazione inviata.</div>'; return; }
+    const st = { pending: "In attesa", accepted: "Accettata", rejected: "Respinta" };
+    el.innerHTML = list.map(r => {
+      let extra = "";
+      if (r.status === "accepted" && r.resolution) extra = `<p class="s">Rimborsati ${fmt(r.resolution.refund)}${r.resolution.compensation ? " + risarcimento " + fmt(r.resolution.compensation) : ""}.</p>`;
+      if (r.status === "rejected" && r.resolution) extra = `<p class="s">${r.resolution.fee ? "Addebito per il disturbo: " + fmt(r.resolution.fee) + "." : "Nessun addebito."}</p>`;
+      if (r.resolution && r.resolution.note) extra += `<p class="s">Nota dell'amministratore: ${esc(r.resolution.note)}</p>`;
+      return `<div class="rep"><div class="row" style="justify-content:space-between"><b>Contro ${esc(r.scammerNick)} · ${fmt(r.amount)}</b><span class="badge ${esc(r.status)}">${esc(st[r.status] || r.status)}</span></div>
+        <p class="s">${esc(fmtDate(r.createdAt))}</p><p>${esc(r.description)}</p>${extra}</div>`;
+    }).join("");
+  };
+  state.unsubs.push(onSnapshot(query(collection(db, "reports"), where("reporterUid", "==", uid)), snap => {
+    reports = snap.docs.map(d => ({ id: d.id, ...d.data() })); paintReports();
+  }, e => toast(friendly(e), "err")));
+
+  // --- bonifico ---
+  $("#fTx").onsubmit = ev => { ev.preventDefault(); run($("#tGo"), async () => {
+    const toNick = $("#tNick").value.trim().toLowerCase();
+    const amount = toInt($("#tAmt").value);
+    const note = $("#tNote").value.trim().slice(0, 100);
+    if (!NICK_RE.test(toNick)) throw new UserError("Nickname del destinatario non valido.");
+    if (toNick === me.nick) throw new UserError("Non puoi inviare soldi a te stesso.");
+    if (!(amount >= 1)) throw new UserError("Inserisci un importo intero maggiore di zero.");
+    if (amount > MAX_TX) throw new UserError(`Importo massimo per bonifico: ${fmt(MAX_TX)}.`);
+    if (amount > me.balance) throw new UserError("Saldo insufficiente.");
+    const ns = await getDoc(doc(db, "nicknames", toNick));
+    if (!ns.exists()) throw new UserError("Nessun utente con questo nickname.");
+    const { uid: toUid, role } = ns.data();
+    if (role !== "user") throw new UserError("Non puoi inviare soldi all'amministratore.");
+    const ok = await confirmBox("Conferma bonifico (finto)", `<p>Inviare <b>${fmt(amount)}</b> a <b>${esc(toNick)}</b>?</p><p class="muted small">Sono Alessandri finti: non hanno valore reale.</p>`, "Invia");
+    if (!ok) return;
+    const txRef = doc(collection(db, "transactions"));
+    const b = writeBatch(db);
+    b.update(doc(db, "users", uid), { balance: increment(-amount), lastDebit: txRef.id });
+    b.update(doc(db, "users", toUid), { balance: increment(amount), lastCredit: txRef.id });
+    b.set(txRef, { type: "transfer", from: uid, fromNick: me.nick, to: toUid, toNick, amount, note, participants: [uid, toUid], createdAt: serverTimestamp() });
+    await b.commit();
+    $("#fTx").reset();
+    toast(`Bonifico di ${fmt(amount)} inviato a ${toNick}`, "ok");
+  }); };
+
+  // --- segnalazione ---
+  $("#fRep").onsubmit = ev => { ev.preventDefault(); run($("#sGo"), async () => {
+    const scammerNick = $("#sNick").value.trim().toLowerCase();
+    const amount = toInt($("#sAmt").value);
+    const description = $("#sDesc").value.trim();
+    if (!NICK_RE.test(scammerNick)) throw new UserError("Nickname non valido.");
+    if (scammerNick === me.nick) throw new UserError("Non puoi segnalare te stesso.");
+    if (!(amount >= 1)) throw new UserError("Inserisci l'importo perso (numero intero).");
+    if (description.length < 10) throw new UserError("Descrivi cos'è successo (almeno 10 caratteri).");
+    const ns = await getDoc(doc(db, "nicknames", scammerNick));
+    if (!ns.exists() || ns.data().role !== "user") throw new UserError("Nessun utente con questo nickname.");
+    await addDoc(collection(db, "reports"), { reporterUid: uid, reporterNick: me.nick, scammerNick, scammerUid: ns.data().uid, amount, description, status: "pending", createdAt: serverTimestamp() });
+    $("#fRep").reset();
+    toast("Segnalazione inviata all'amministratore.", "ok");
+  }); };
+}
+
+/* ============ AREA AMMINISTRATORE ============ */
+function startAdmin() {
+  state.view = "admin"; renderHeader();
+  const adm = { tab: "home", users: [], txs: [], reports: [], uSearch: "", fNick: "", fType: "" };
+
+  app.innerHTML = `<div class="tabs" id="admTabs"></div><div id="admTools"></div><div id="admBody"></div>`;
+
+  const pendingCount = () => adm.reports.filter(r => r.status === "pending").length;
+  const paintTabs = () => {
+    const tabs = [["home", "Panoramica"], ["reports", "Segnalazioni"], ["users", "Utenti"], ["txs", "Movimenti"]];
+    $("#admTabs").innerHTML = tabs.map(([k, l]) => `<button data-t="${k}" class="${adm.tab === k ? "on" : ""}">${l}${k === "reports" && pendingCount() ? `<span class="count">${pendingCount()}</span>` : ""}</button>`).join("");
+  };
+  $("#admTabs").onclick = ev => { const b = ev.target.closest("[data-t]"); if (b) setTab(b.dataset.t); };
+
+  function setTab(t) {
+    adm.tab = t; paintTabs();
+    const tools = $("#admTools");
+    if (t === "users") {
+      tools.innerHTML = `<div class="tools"><input id="uSearch" placeholder="Cerca nickname…" value="${esc(adm.uSearch)}"></div>`;
+      $("#uSearch").oninput = e => { adm.uSearch = e.target.value.trim().toLowerCase(); paintBody(); };
+    } else if (t === "txs") {
+      tools.innerHTML = `<div class="tools"><input id="fNick" placeholder="Filtra per nickname…" value="${esc(adm.fNick)}">
+        <select id="fType"><option value="">Tutti i tipi</option>${Object.entries(TX_LABEL).map(([k, l]) => `<option value="${k}" ${adm.fType === k ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></div>`;
+      $("#fNick").oninput = e => { adm.fNick = e.target.value.trim().toLowerCase(); paintBody(); };
+      $("#fType").onchange = e => { adm.fType = e.target.value; paintBody(); };
+    } else tools.innerHTML = "";
+    paintBody();
+  }
+
+  const txRowAdmin = t => `<div class="tx"><div><div class="t">${esc(TX_LABEL[t.type] || t.type)}</div>
+      <div class="s">${esc(t.fromNick || BANK)} → ${esc(t.toNick || BANK)} · ${esc(fmtDate(t.createdAt))}${t.note ? " · " + esc(t.note) : ""}</div></div>
+      <div class="amt">${fmt(t.amount)}</div></div>`;
+
+  function paintBody() {
+    const body = $("#admBody"); if (!body) return;
+    paintTabs();
+    if (adm.tab === "home") {
+      const total = adm.users.reduce((s, u) => s + (u.balance || 0), 0);
+      const recent = adm.txs.slice(0, 8);
+      body.innerHTML = `
+        <div class="stats">
+          <div class="stat"><b>${adm.users.length}</b><span>Utenti registrati</span></div>
+          <div class="stat"><b>${fmt(total)}</b><span>Alessandri in circolazione</span></div>
+          <div class="stat"><b>${adm.txs.length}</b><span>Movimenti (ultimi 500)</span></div>
+          <div class="stat"><b>${pendingCount()}</b><span>Segnalazioni in attesa</span></div>
+        </div>
+        <div class="card"><h2>Ultimi movimenti</h2>${recent.length ? recent.map(txRowAdmin).join("") : '<div class="empty">Ancora nessun movimento.</div>'}</div>`;
+    } else if (adm.tab === "users") {
+      const list = adm.users.filter(u => !adm.uSearch || u.nickname.includes(adm.uSearch)).sort((a, b) => a.nickname.localeCompare(b.nickname));
+      body.innerHTML = `<div class="card"><h2>Utenti (${list.length})</h2>${list.length ? list.map(u => `
+        <div class="urow"><div><b>${esc(u.nickname)}</b><div class="s muted">Saldo ${fmt(u.balance)} · iscritto ${esc(fmtDate(u.createdAt))}</div></div>
+          <div class="row">
+            <button class="btn ghost sm" data-a="add" data-u="${esc(u.id)}">+ Accredita</button>
+            <button class="btn ghost sm" data-a="remove" data-u="${esc(u.id)}">− Togli</button>
+            <button class="btn ghost sm" data-a="fee" data-u="${esc(u.id)}">Addebito</button>
+            <button class="btn ghost sm" data-a="moves" data-u="${esc(u.nickname)}">Movimenti</button>
+          </div></div>`).join("") : '<div class="empty">Nessun utente.</div>'}</div>`;
+    } else if (adm.tab === "txs") {
+      const list = adm.txs.filter(t => (!adm.fType || t.type === adm.fType) && (!adm.fNick || (t.fromNick || "").includes(adm.fNick) || (t.toNick || "").includes(adm.fNick)));
+      body.innerHTML = `<div class="card"><h2>Tutti i movimenti (${list.length})</h2>${list.length ? list.slice(0, 200).map(txRowAdmin).join("") : '<div class="empty">Nessun movimento.</div>'}${list.length > 200 ? '<p class="muted small">Mostrati i primi 200: usa i filtri.</p>' : ""}</div>`;
+    } else if (adm.tab === "reports") {
+      const pend = adm.reports.filter(r => r.status === "pending"), done = adm.reports.filter(r => r.status !== "pending");
+      body.innerHTML = `<h2>In attesa (${pend.length})</h2>${pend.length ? pend.map(r => reportCard(r)).join("") : '<div class="card empty">Nessuna segnalazione da esaminare.</div>'}
+        <h2 style="margin-top:20px">Già esaminate (${done.length})</h2>${done.length ? done.map(r => reportCard(r)).join("") : '<div class="card empty">Ancora nessuna.</div>'}`;
+    }
+  }
+
+  function reportCard(r) {
+    const sc = adm.users.find(u => u.nickname === r.scammerNick);
+    const related = adm.txs.filter(t => t.type === "transfer" && t.from === r.reporterUid && t.toNick === r.scammerNick).slice(0, 5);
+    const st = { pending: "In attesa", accepted: "Accettata", rejected: "Respinta" };
+    let res = "";
+    if (r.resolution) res = `<p class="s muted">${r.status === "accepted" ? `Rimborso ${fmt(r.resolution.refund)} + risarcimento ${fmt(r.resolution.compensation)}` : (r.resolution.fee ? `Addebito di ${fmt(r.resolution.fee)}` : "Nessun addebito")}${r.resolution.note ? " · " + esc(r.resolution.note) : ""}</p>`;
+    return `<div class="rep">
+      <div class="row" style="justify-content:space-between"><b>${esc(r.reporterNick)} → contro ${esc(r.scammerNick)}</b><span class="badge ${esc(r.status)}">${esc(st[r.status] || r.status)}</span></div>
+      <p class="s muted">${esc(fmtDate(r.createdAt))} · importo richiesto ${fmt(r.amount)}${sc ? " · saldo del segnalato " + fmt(sc.balance) : ""}</p>
+      <p>${esc(r.description)}</p>
+      ${related.length ? `<p class="s muted">Bonifici da ${esc(r.reporterNick)} a ${esc(r.scammerNick)}: ${related.map(t => fmt(t.amount) + " (" + esc(fmtDate(t.createdAt)) + ")").join(", ")}</p>` : `<p class="s muted">Nessun bonifico registrato tra i due account.</p>`}
+      ${res}
+      ${r.status === "pending" ? `<div class="row" style="margin-top:8px"><button class="btn primary sm" data-a="accept" data-r="${esc(r.id)}">Accetta…</button><button class="btn ghost sm" data-a="reject" data-r="${esc(r.id)}">Rifiuta…</button></div>` : ""}
+    </div>`;
+  }
+
+  $("#admBody").addEventListener("click", ev => {
+    const b = ev.target.closest("[data-a]"); if (!b) return;
+    const a = b.dataset.a;
+    if (a === "moves") { adm.fNick = b.dataset.u; adm.fType = ""; setTab("txs"); return; }
+    if (a === "accept") return acceptModal(adm.reports.find(r => r.id === b.dataset.r));
+    if (a === "reject") return rejectModal(adm.reports.find(r => r.id === b.dataset.r));
+    const u = adm.users.find(x => x.id === b.dataset.u); if (u) balanceModal(u, a);
+  });
+
+  /* --- modifica saldo --- */
+  function balanceModal(u, mode) {
+    const T = { add: "Accredita Alessandri", remove: "Togli Alessandri", fee: "Addebito" }[mode];
+    const m = modal(`<h3>${esc(T)} — ${esc(u.nickname)}</h3>
+      <p class="muted">Saldo attuale: ${fmt(u.balance)}</p>
+      <label for="mAmt">Importo (₳, numero intero)</label>
+      <input id="mAmt" type="number" min="1" step="1" inputmode="numeric" value="${mode === "fee" ? 30 : ""}">
+      <label for="mNote">Motivo (visibile all'utente)</label>
+      <input id="mNote" maxlength="140" placeholder="${mode === "add" ? "Es. premio" : mode === "fee" ? "Es. addebito per il disturbo" : "Es. correzione saldo"}">
+      <div class="row end"><button class="btn ghost" id="mNo">Annulla</button><button class="btn primary" id="mOk">Conferma</button></div>`);
+    $("#mNo", m.el).onclick = m.close;
+    $("#mOk", m.el).onclick = e => run(e.currentTarget, async () => {
+      const amount = toInt($("#mAmt", m.el).value);
+      const note = $("#mNote", m.el).value.trim().slice(0, 140) || (mode === "add" ? "Accredito" : mode === "fee" ? "Addebito" : "Prelievo");
+      if (!(amount >= 1) || amount > 1000000) throw new UserError("Importo non valido (intero, 1–1.000.000).");
+      if (mode !== "add" && amount > u.balance) throw new UserError(`L'utente ha solo ${fmt(u.balance)}.`);
+      const txRef = doc(collection(db, "transactions"));
+      const b = writeBatch(db);
+      if (mode === "add") {
+        b.update(doc(db, "users", u.id), { balance: increment(amount) });
+        b.set(txRef, { type: "admin_add", from: null, fromNick: BANK, to: u.id, toNick: u.nickname, amount, note, participants: [u.id], createdAt: serverTimestamp() });
+      } else {
+        b.update(doc(db, "users", u.id), { balance: increment(-amount) });
+        b.set(txRef, { type: mode === "fee" ? "fee" : "admin_remove", from: u.id, fromNick: u.nickname, to: null, toNick: BANK, amount, note, participants: [u.id], createdAt: serverTimestamp() });
+      }
+      await b.commit();
+      m.close(); toast("Fatto.", "ok");
+    });
+  }
+
+  /* --- accetta segnalazione --- */
+  function acceptModal(r) {
+    if (!r || r.status !== "pending") return;
+    const sc = adm.users.find(u => u.nickname === r.scammerNick);
+    const scBal = sc ? sc.balance : 0;
+    const m = modal(`<h3>Accetta la segnalazione</h3>
+      <p><b>${esc(r.reporterNick)}</b> segnala <b>${esc(r.scammerNick)}</b> (richiesti ${fmt(r.amount)}).</p>
+      <p class="muted small">Saldo di ${esc(r.scammerNick)}: ${fmt(scBal)}</p>
+      <label for="aRef">Importo spostato dal truffatore al segnalante (₳)</label>
+      <input id="aRef" type="number" min="0" step="1" value="${Math.min(r.amount, scBal)}">
+      <label for="aComp">Risarcimento in più pagato dalla banca (₳)</label>
+      <input id="aComp" type="number" min="0" step="1" value="${Math.round(r.amount * 0.1)}">
+      <label for="aNote">Nota per l'utente (facoltativa)</label>
+      <input id="aNote" maxlength="140">
+      <div class="row end"><button class="btn ghost" id="aNo">Annulla</button><button class="btn primary" id="aOk">Accetta</button></div>`);
+    $("#aNo", m.el).onclick = m.close;
+    $("#aOk", m.el).onclick = e => run(e.currentTarget, async () => {
+      const refund = toInt($("#aRef", m.el).value), comp = toInt($("#aComp", m.el).value);
+      const note = $("#aNote", m.el).value.trim().slice(0, 140);
+      if (!(refund >= 0) || !(comp >= 0) || refund + comp < 1) throw new UserError("Inserisci importi interi (almeno uno maggiore di zero).");
+      if (refund > scBal) throw new UserError(`Il truffatore ha solo ${fmt(scBal)}: riduci il rimborso.`);
+      if (refund > 1000000 || comp > 1000000) throw new UserError("Importo troppo alto.");
+      const ns = await getDoc(doc(db, "nicknames", r.scammerNick));
+      if (!ns.exists()) throw new UserError("Il truffatore non esiste più.");
+      const scUid = ns.data().uid;
+      const b = writeBatch(db);
+      if (refund > 0) {
+        b.update(doc(db, "users", scUid), { balance: increment(-refund) });
+        b.set(doc(collection(db, "transactions")), { type: "refund", from: scUid, fromNick: r.scammerNick, to: r.reporterUid, toNick: r.reporterNick, amount: refund, note: "Rimborso per segnalazione accettata", participants: [scUid, r.reporterUid], createdAt: serverTimestamp() });
+      }
+      if (comp > 0) {
+        b.set(doc(collection(db, "transactions")), { type: "compensation", from: null, fromNick: BANK, to: r.reporterUid, toNick: r.reporterNick, amount: comp, note: "Risarcimento extra per segnalazione accettata", participants: [r.reporterUid], createdAt: serverTimestamp() });
+      }
+      b.update(doc(db, "users", r.reporterUid), { balance: increment(refund + comp) });
+      b.update(doc(db, "reports", r.id), { status: "accepted", resolution: { refund, compensation: comp, fee: 0, note }, resolvedAt: serverTimestamp() });
+      await b.commit();
+      m.close(); toast("Segnalazione accettata.", "ok");
+    });
+  }
+
+  /* --- rifiuta segnalazione --- */
+  function rejectModal(r) {
+    if (!r || r.status !== "pending") return;
+    const rp = adm.users.find(u => u.id === r.reporterUid);
+    const rpBal = rp ? rp.balance : 0;
+    const m = modal(`<h3>Rifiuta la segnalazione</h3>
+      <p><b>${esc(r.reporterNick)}</b> contro <b>${esc(r.scammerNick)}</b> (${fmt(r.amount)}).</p>
+      <p class="muted small">Saldo di ${esc(r.reporterNick)}: ${fmt(rpBal)}</p>
+      <label class="radio"><input type="radio" name="fee" value="0" checked> Nessun addebito</label>
+      <label class="radio"><input type="radio" name="fee" value="30"> Addebito di ${fmt(30)} per il disturbo</label>
+      <label class="radio"><input type="radio" name="fee" value="x"> Altro importo: <input id="rCustom" type="number" min="1" step="1" style="max-width:110px"></label>
+      <label for="rNote">Nota per l'utente (facoltativa)</label>
+      <input id="rNote" maxlength="140">
+      <div class="row end"><button class="btn ghost" id="rNo">Annulla</button><button class="btn danger" id="rOk">Rifiuta</button></div>`);
+    $("#rNo", m.el).onclick = m.close;
+    $("#rOk", m.el).onclick = e => run(e.currentTarget, async () => {
+      const sel = m.el.querySelector('input[name="fee"]:checked').value;
+      let fee = sel === "x" ? toInt($("#rCustom", m.el).value) : Number(sel);
+      if (!(fee >= 0) || fee > 1000000) throw new UserError("Importo dell'addebito non valido.");
+      fee = Math.min(fee, rpBal); // non si scende sotto zero
+      const note = $("#rNote", m.el).value.trim().slice(0, 140);
+      const b = writeBatch(db);
+      if (fee > 0) {
+        b.update(doc(db, "users", r.reporterUid), { balance: increment(-fee) });
+        b.set(doc(collection(db, "transactions")), { type: "fee", from: r.reporterUid, fromNick: r.reporterNick, to: null, toNick: BANK, amount: fee, note: "Addebito per segnalazione respinta", participants: [r.reporterUid], createdAt: serverTimestamp() });
+      }
+      b.update(doc(db, "reports", r.id), { status: "rejected", resolution: { refund: 0, compensation: 0, fee, note }, resolvedAt: serverTimestamp() });
+      await b.commit();
+      m.close(); toast("Segnalazione respinta.", "ok");
+    });
+  }
+
+  /* --- dati in tempo reale --- */
+  state.unsubs.push(onSnapshot(collection(db, "users"), s => { adm.users = s.docs.map(d => ({ id: d.id, ...d.data() })); paintBody(); }, e => toast(friendly(e), "err")));
+  state.unsubs.push(onSnapshot(query(collection(db, "transactions"), orderBy("createdAt", "desc"), limit(500)), s => { adm.txs = s.docs.map(d => ({ id: d.id, ...d.data() })); paintBody(); }, e => toast(friendly(e), "err")));
+  state.unsubs.push(onSnapshot(query(collection(db, "reports"), orderBy("createdAt", "desc"), limit(200)), s => { adm.reports = s.docs.map(d => ({ id: d.id, ...d.data() })); paintBody(); }, e => toast(friendly(e), "err")));
+
+  setTab("home");
+}
+
+/* ============ Avvio ============ */
+showGate();
+renderAuth();
+</script>
+</body>
+</html>
